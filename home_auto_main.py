@@ -12,6 +12,10 @@ import sys
 import socket
 import subprocess
 import mysql
+import smtplib
+import MySQLdb
+from DBUtils.PersistentDB import PersistentDB
+
 
 GPIO.setmode(GPIO.BOARD)
 
@@ -129,8 +133,10 @@ class AteeqHomeAutomation:
                             </option>
                         </select><br>
      <center>
-             QR-Code to get connected to This WiFi!<br>
-             <img src="/static/wifi.png" /><br>
+            <form method="post" action="http://%s:8090/processform"> 
+            Email: <input type="email" name="email"><br> 
+            <input type="submit" value="Submit"> </form><br>
+             <a href="/static/qrcode.html">QR-Code</a> to get connected to This WiFi!<br>
              Check Switches <a href="http://%s/status.html">history</a><br>
      </center>
 
@@ -140,12 +146,11 @@ class AteeqHomeAutomation:
 </div>
      </body>
 </html>
-''' % (my_ip,my_ip)
+''' % (my_ip,my_ip,my_ip)
     @cherrypy.expose
     def request(self, **data):
         # Then to access the data do the following
         #print data
-        #os.system("sudo sh /home/pi/mjpeg_streamer/code/mjpg-streamer/runme.sh")
         key = data['key_pressed'].lower()
         if key == "auto_on":
             print "Auto Mode On!"
@@ -185,12 +190,51 @@ class AteeqHomeAutomation:
         elif key == "stream_off":
             print "Stream Off!"
             os.system("sudo service mjpg-streamer stop")
-        elif key == "mail":
-            os.system('sudo echo "http://ateeqhomeautomation.ngrok.com" | mail -s "Click the link to control stuff!" ahmedateeq65@gmail.com ')
+
 
         else:
             print key
-            
+
+    @cherrypy.expose
+    def processform(self, email):
+        smtpserver = 'smtp.gmail.com:587'
+        authreq = 1
+        smtpuser='ahmedateeq64@gmail.com'
+        smtppass='<secret>'
+        FROM = 'ahmedateeq64@gmail.com'
+        TO = [email]
+        SUBJECT = "Hi Greetings from Ateeq."
+        TEXT = "Click on this Address to control devices http://ateeqhomeautomation.ngrok.com"
+        # Prepare actual message
+        message = """\From: %s\nTo: %s\nSubject: %s\n\n%s
+            """ % (FROM, ", ".join(TO), SUBJECT, TEXT)
+        sender = 'ahmedateeq64@gmail.com'
+        session = smtplib.SMTP(smtpserver)
+        session.ehlo()
+        session.starttls() 
+        if authreq:
+           session.login(smtpuser,smtppass)
+           smtpresult = session.sendmail(sender,email,message)
+        if smtpresult: 
+           errstr = "" 
+           for recip in smtpresult.keys(): 
+               errstr = """Could not delivery mail to: %s Server said: %s 
+                           %s 
+                           %s""" % (email, smtpresult[email][0], smtpresult[email][1], errstr) 
+           raise smtplib.SMTPException, errstr 
+        return '''<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+    </head>
+    <body>
+    <center>
+    <h1>Mail sent to %s </h1>
+    </center>
+    </body>
+</html>''' % (email)
+
+        
 import os.path
 tutconf = os.path.join(os.path.dirname(__file__), 'config.conf')
 
