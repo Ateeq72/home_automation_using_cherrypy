@@ -1,0 +1,172 @@
+"""
+Simple example to show how to use cherrypy with jquery and jquery mobile.
+"""
+
+import cherrypy
+import RPi.GPIO as GPIO
+import time
+from time import sleep
+import os
+import sys
+
+GPIO.setmode(GPIO.BOARD)
+
+#set up the pins for relay
+
+re1 = 7
+re2 = 11
+re3 = 13
+
+#set'em up as required
+	
+GPIO.setup(re1,GPIO.OUT)
+GPIO.setup(re2,GPIO.OUT)
+GPIO.setup(re3,GPIO.OUT)
+
+
+class AteeqHomeAutomation:
+    """ Sample request handler class. """
+    @cherrypy.expose
+    def index(self):
+        return '''<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0;" />
+        <meta name="viewport" content="width=device-width"/>
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <title>
+         Welcome To Ateeq's Home Automation
+        </title>
+        <link rel="stylesheet" href="static/jquery.mobile-1.0.1.min.css" />
+        <script src="static/jquery.min.js">
+        </script>
+        <script src="static/jquery.mobile-1.0.1.min.js">
+        </script>
+        <script type="text/javascript">
+        $(document).ready(function() {
+            //stop the page from doing a stretch from the top when dragged ;
+            document.ontouchmove = function(event){ event.preventDefault(); };
+            //move beyond the address  bar to hide ;
+            window.scrollTo(0, 1);
+            //start button click code
+            $("#auto").change(function () {$.post('/request',{key_pressed:"auto_"+$(this).val()})});
+            $("#power1").change(function () {$.post('/request',{key_pressed:"power1_"+$(this).val()})});
+            $("#power2").change(function () {$.post('/request',{key_pressed:"power2_"+$(this).val()})});
+            $("#power3").change(function () {$.post('/request',{key_pressed:"power3_"+$(this).val()})});
+        });
+        </script>
+    </head>
+    <body style="overflow: hidden;overflow-x:hidden;">
+        <div data-role="page" data-theme="a" id="page1">
+            <div data-theme="a" data-role="header" data-position="">
+                <h5>
+                    Ateeq's <br> Home Automation
+                </h5>
+            </div>
+            <div data-role="content">
+                <div data-role="fieldcontain">
+                    <fieldset data-role="controlgroup">
+                        <label for="auto">
+                        Automatic Mode! 
+                        </label>
+                        <select name="auto" id="auto" data-theme="a" data-role="slider">
+                            <option value="off">
+                                Off
+                            </option>
+                            <option value="on">
+                                On
+                            </option>
+                        </select><br>
+                       <label for="power1">
+                       Switch One
+                        </label>
+                        <select name="power1" id="power1" data-theme="a" data-role="slider">
+                            <option value="off">
+                                Off
+                            </option>
+                            <option value="on">
+                                On
+                            </option>
+                        </select><br>
+                       <label for="power1">
+                       Switch Two
+                        </label>
+                        <select name="power2" id="power2" data-theme="a" data-role="slider">
+                            <option value="off">
+                                Off
+                            </option>
+                            <option value="on">
+                                On
+                            </option>
+                        </select><br>
+                       <label for="power3">
+                       Switch Three/ Switch Auto (Dont use if Auto!)
+                        </label>
+                        <select name="power3" id="power3" data-theme="a" data-role="slider">
+                            <option value="off">
+                                Off
+                            </option>
+                            <option value="on">
+                                On
+                            </option>
+                        </select>
+
+                    </fieldset>
+                </div>
+            </div>
+        <br>
+     <center>
+  <a href=/static/stream.html>Click Here for Live Stream!</a><br>
+  Scan this QR-Code to get connected to This WiFi! <br>
+             <img src="/static/wifi.png" /><br>
+     </center>
+</div>
+     </body>
+</html>
+'''
+    @cherrypy.expose
+    def request(self, **data):
+        # Then to access the data do the following
+        #print data
+        #os.system("sudo sh /home/pi/mjpeg_streamer/code/mjpg-streamer/runme.sh")
+        key = data['key_pressed'].lower()
+        if key == "auto_on":
+            print "Auto Mode On!"
+            os.system("sudo /etc/init.d/home_auto_ateeq.sh start")
+        elif key == "auto_off":
+            print "Auto Mode Off!"
+            os.system("sudo /etc/init.d/home_auto_ateeq.sh stop")
+        elif key == "power1_on":
+            print "p1 On"
+            GPIO.output(re1, 1)    
+        elif key == "power1_off":
+            print "p1 Off"
+            GPIO.output(re1, 0)
+        elif key == "power2_on":
+            print "p2 On"
+            GPIO.output(re2, 1)
+        elif key == "power2_off":
+            print "p2 Off"
+            GPIO.output(re2, 0)
+        elif key == "power3_on":
+            print "p3 On"
+            GPIO.output(re3, 1)
+        elif key == "power3_off":
+            print "p3 Off"
+            GPIO.output(re3, 0)
+
+        else:
+            print key
+            
+import os.path
+tutconf = os.path.join(os.path.dirname(__file__), 'config.conf')
+
+if __name__ == '__main__':
+    # CherryPy always starts with app.root when trying to map request URIs
+    # to objects, so we need to mount a request handler root. A request
+    # to '/' will be mapped to HelloWorld().index().
+    cherrypy.quickstart(AteeqHomeAutomation(), config=tutconf)
+else:
+    # This branch is for the test suite; you can ignore it.
+    cherrypy.tree.mount(AteeqHomeAutomation(), config=tutconf)
