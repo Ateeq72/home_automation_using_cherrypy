@@ -1,8 +1,5 @@
 # coding=utf-8
-"""
-Simple example to show how to use cherrypy with jquery and jquery mobile.
-"""
-
+### ateeq72@xda 
 import cherrypy
 import RPi.GPIO as GPIO
 import time
