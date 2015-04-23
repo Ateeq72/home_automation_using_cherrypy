@@ -32,3 +32,11 @@ def insertReading(switch,action):
     db.commit()
     db.close()
     print "Done Inserting"
+
+def removeEvery():
+    db = connect()
+    cur = db.cursor()
+    cur.execute("""TRUNCATE TABLE usage_made""")
+    db.commit()
+    db.close()
+    print "Done Emptying"

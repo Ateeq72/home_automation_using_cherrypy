@@ -16,8 +16,6 @@ import web
 
 from DBUtils.PersistentDB import PersistentDB
 
-
-
 GPIO.setmode(GPIO.BOARD)
 
 #set up the pins for relay
@@ -44,135 +42,88 @@ class AteeqHomeAutomation:
         my_ip = ([(s.connect(('8.8.8.8', 80)), s.getsockname()[0], s.close()) for s in [socket.socket(socket.AF_INET, socket.SOCK_DGRAM)]][0][1])
         return '''<!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=1;" />
-        <meta name="viewport" content="width=device-width"/>
-        <meta name="apple-mobile-web-app-capable" content="yes" />
-        <title>
-         Welcome To Ateeq's Home Automation
-        </title>
-        <link rel="stylesheet" href="static/jquery.mobile-1.0.1.min.css" />
-        <script src="static/jquery.min.js">
-        </script>
-        <script src="static/jquery.mobile-1.0.1.min.js">
-        </script>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>jQuery Mobile: Theme Download</title>
+	<link rel="stylesheet" href="static/ateeqsHA.min.css" />
+	<link rel="stylesheet" href="static/jquery.mobile.icons.min.css" />
+	<link rel="stylesheet" href="static/jquery.mobile.structure-1.4.5.min.css" />
+	<script src="static/jquery-1.11.1.min.js"></script>
+	<script src="static/jquery.mobile-1.4.5.min.js"></script>
 
-
-        <script type="text/javascript">
+<script type="text/javascript">
         $(document).ready(function() {
-            //stop the page from doing a stretch from the top when dragged ;
-            //document.ontouchmove = function(event){ event.preventDefault(); };
-            //move beyond the address  bar to hide ;
-            //window.scrollTo(0, 1);
-            //start button click code
-            $("#auto").change(function () {$.post('/request',{key_pressed:"auto_"+$(this).val()})});
-            $("#power1").change(function () {$.post('/request',{key_pressed:"power1_"+$(this).val()})});
-            $("#power2").change(function () {$.post('/request',{key_pressed:"power2_"+$(this).val()})});
-            $("#power3").change(function () {$.post('/request',{key_pressed:"power3_"+$(this).val()})});
+            $("#clear").click(function () {$.post('/request',{key_pressed:"empty"})});
+            $("#flip-1").change(function () {$.post('/request',{key_pressed:"power1_"+$(this).val()})});
+            $("#flip-2").change(function () {$.post('/request',{key_pressed:"power2_"+$(this).val()})});
+            $("#flip-3").change(function () {$.post('/request',{key_pressed:"power3_"+$(this).val()})});
             $("#stream").change(function () {$.post('/request',{key_pressed:"stream_"+$(this).val()})});
-	    $("#empty").click(function () {$.post('/request',{key_pressed:"empty"})});
+            $("#auto").change(function () {$.post('/request',{key_pressed:"auto_"+$(this).val()})});
         });
-        </script>
-       </head>
-    <body style="overflow: hidden;overflow-x:hidden;" onload="createImageLayer();">
-        <div data-role="page" data-theme="a" id="page1">
-            <div data-theme="a" data-role="header" data-position="">
+</script>
 
+</head>
+<body>
 
-                <h5>
-                    Ateeq's <br> Home Automation
-                </h5>
-		
-            </div>
-
-
-           <div data-role="content">
-                <div data-role="fieldcontain">
-                    <fieldset data-role="controlgroup">
-                        <label for="auto">
-                        Automatic Mode! 
-                        </label>
-                        <select name="auto" id="auto" data-theme="a" data-role="slider">
-                            <option value="off">
-                                Off
-                            </option>
-                            <option value="on">
-                                On
-                            </option>
-                        </select><br>
-                       <label for="power1">
-                       Switch One
-                        </label>
-                        <select name="power1" id="power1" data-theme="a" data-role="slider">
-                            <option value="off">
-                                Off
-                            </option>
-                            <option value="on">
-                                On
-                            </option>
-                        </select><br>
-                       <label for="power1">
-                       Switch Two
-                        </label>
-                        <select name="power2" id="power2" data-theme="a" data-role="slider">
-                            <option value="off">
-                                Off
-                            </option>
-                            <option value="on">
-                                On
-                            </option>
-                        </select><br>
-                       <label for="power3">
-                       Switch Three/ Switch Auto (Dont use if Auto!)
-                        </label>
-                        <select name="power3" id="power3" data-theme="a" data-role="slider">
-                            <option value="off">
-                                Off
-                            </option>
-                            <option value="on">
-                                On
-                            </option>
-                        </select><br>
-                       <label for="stream">
-      Stream : <a href="http://%s:8091/stream_webcam.html"> local! </a> & <a href="http://ateeqhomeautomationstream.ngrok.com/stream_webcam.html">Worldwide Stream!</a>
-                        </label>
-                        <select name="stream" id="stream" data-theme="a" data-role="slider">
-                            <option value="off">
-                                Off
-                            </option>
-                            <option value="on">
-                                On
-                            </option>
-                        </select>
-</fieldset>
-<div data-role="content">
-  <div class="ui-grid-a">
-         <div class="ui-block-a">                 
-            <form method="post" action="/processform"> 
-            <input type="email" value="E-mail" name="email"> 
-         </div>
-         <div class="ui-block-b">
-             <input type="submit" value="Submit"> </form>
-         </div>
-  </div>
-  <div class="ui-grid-a">
-         
-	    <a href="/qrcode">QR-Code</a> to get connected to This WiFi!<br>
-         
-  </div>
-  <div class="ui-grid-a"><center>----</center>
-  </div>
-  <div class="ui-grid-a">
-         <div class="ui-block-a"> 
-             Check Switches <a href="http://%s/status.html">history</a>
-         </div>
-         <div class="ui-block-b"> 
-	     <input type="button" id="empty" data-role="button" data-transition="fade"  value="Clear History!"/>
-         </div>
- 
-  </div>
+	<div data-role="page" data-theme="a">
+		<div data-role="header" data-position="inline">
+			<h1>Ateeq's <br> Home Automation</h1>
+		</div>
+<center>
+<div data-role="content" data-theme="a">
+<div class="ui-field-contain">
+        <label for="auto">Automatic Mode:</label>
+        <select name="auto" id="auto" data-role="flipswitch">
+            <option value="off">Off</option>
+            <option value="on">On</option>
+        </select>
+    </div>
+<div class="ui-field-contain">
+        <label for="flip-1">Switch One:</label>
+        <select name="flip-1" id="flip-1" data-role="flipswitch">
+            <option value="off">Off</option>
+            <option value="on">On</option>
+        </select>
+    </div>
+<div class="ui-field-contain">
+        <label for="flip-2">Switch Two:</label>
+        <select name="flip-2" id="flip-2" data-role="flipswitch">
+            <option value="off">Off</option>
+            <option value="on">On</option>
+        </select>
+    </div>
+<div class="ui-field-contain">
+        <label for="flip-3">Switch Three:</label>
+        <select name="flip-3" id="flip-3" data-role="flipswitch">
+            <option value="off">Off</option>
+            <option value="on">On</option>
+        </select>
+    </div>
+<div class="ui-field-contain">
+        <label for="stream">Stream Toggle:  <a href="http://%s:8091/stream_webcam.html"> local! </a> & <a href="http://ateeqhomeautomationstream.ngrok.com/stream_webcam.html">Worldwide Stream!</a></label>
+        <select name="stream" id="stream" data-role="flipswitch">
+            <option value="off">Off</option>
+            <option value="on">On</option>
+        </select>
+    </div>
+<div class="ui-field-contain">
+<label for="clear">Check Switches <a href="http://%s/status.html">history</a></label>
+<input type="button" id="clear" data-inline="true" value="Clear History">
 </div>
+<div class="ui-field-contain">
+<a href="/qrcode">Click Here!</a> to get connected to this Wifi!
+</div>
+<div class="ui-field-contain">
+
+<form method="post" action="/processform"> 
+<input type="email" name="email" id="email" placeholder="Enter the E-Mail ID!"  value="">
+<input type="submit" value="Submit"> 
+</form>
+
+</div>
+</center>
+</fieldset>
 </div>
 </div>
 </body>
@@ -234,24 +185,26 @@ class AteeqHomeAutomation:
         return '''<!DOCTYPE html>
 <html>
     <head>
-        <meta charset="utf-8" />
-        <link rel="stylesheet" href="static/jquery.mobile-1.0.1.min.css" />
-        <script src="static/jquery.min.js">
-        </script>
-        <script src="static/jquery.mobile-1.0.1.min.js">
-        </script>
+    <meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="static/ateeqsHA.min.css" />
+	<link rel="stylesheet" href="static/jquery.mobile.icons.min.css" />
+	<link rel="stylesheet" href="static/jquery.mobile.structure-1.4.5.min.css" />
+	<script src="static/jquery-1.11.1.min.js"></script>
+	<script src="static/jquery.mobile-1.4.5.min.js"></script>
     </head>
-    <body style="overflow: hidden;overflow-x:hidden;" onload="createImageLayer();">
-        <div data-role="page" data-theme="a" id="page1">
-            <div data-theme="a" data-role="header" data-position="">
-                <h5>
+    <body>
+        <div data-role="page" data-theme="a">
+            <div data-role="header" data-position="inline">
+                <h1>
                     Ateeq's <br> Home Automation
-                </h5>
+                </h1>
             </div>
     <center>
     <img src="/static/wifi.png" /><br>
     Scan this code with your Smart Phone usind Qr-Code scanner!
     </center>
+    </div>
     </body>
 </html>'''
         
@@ -261,7 +214,7 @@ class AteeqHomeAutomation:
         smtpserver = 'smtp.gmail.com:587'
         authreq = 1
         smtpuser='ahmedateeq64@gmail.com'
-        smtppass='flmjlspxjmdltemeat'
+        smtppass='flmjlspxjmdlteme'
         FROM = 'ahmedateeq64@gmail.com'
         TO = [email]
         SUBJECT = "Hi Greetings from Ateeq."
@@ -286,24 +239,26 @@ class AteeqHomeAutomation:
         return '''<!DOCTYPE html>
 <html>
     <head>
-        <meta charset="utf-8" />
-        <link rel="stylesheet" href="static/jquery.mobile-1.0.1.min.css" />
-        <script src="static/jquery.min.js">
-        </script>
-        <script src="static/jquery.mobile-1.0.1.min.js">
-        </script>
+        <meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="static/ateeqsHA.min.css" />
+	<link rel="stylesheet" href="static/jquery.mobile.icons.min.css" />
+	<link rel="stylesheet" href="static/jquery.mobile.structure-1.4.5.min.css" />
+	<script src="static/jquery-1.11.1.min.js"></script>
+	<script src="static/jquery.mobile-1.4.5.min.js"></script>
     </head>
-    <body style="overflow: hidden;overflow-x:hidden;" onload="createImageLayer();">
-        <div data-role="page" data-theme="a" id="page1">
-            <div data-theme="a" data-role="header" data-position="">
-                <h5>
+    <body>
+       <div data-role="page" data-theme="a">
+		<div data-role="header" data-position="inline">
+               <h1>
                     Ateeq's <br> Home Automation
-                </h5>
+                </h1>
 
             </div>
     <center>
     <h1>Mail sent to %s </h1>
     </center>
+    </div>
     </body>
 </html>''' % (email)
 
