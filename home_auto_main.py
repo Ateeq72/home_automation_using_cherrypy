@@ -1,6 +1,9 @@
 #!/usr/bin/python
 # coding=utf-8
 ### ateeq72@xda 
+# Jquery stuff
+# http://themeroller.jquerymobile.com/index.php
+# http://demos.jquerymobile.com/1.4.5/ 
 import cherrypy
 import RPi.GPIO as GPIO
 import time
@@ -94,7 +97,7 @@ class AteeqHomeAutomation:
         </select>
     </div>
 <div class="ui-field-contain">
-        <label for="flip-3">Switch Three:</label>
+        <label for="flip-3">Switch Three** :</label>
         <select name="flip-3" id="flip-3" data-role="flipswitch">
             <option value="off">Off</option>
             <option value="on">On</option>
@@ -121,6 +124,9 @@ class AteeqHomeAutomation:
 <input type="submit" value="Submit"> 
 </form>
 
+</div>
+<div class="ui-field-contain">
+<p> **please dont use if in automatic mode!</p>
 </div>
 </center>
 </fieldset>
