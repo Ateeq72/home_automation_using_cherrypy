@@ -1,3 +1,4 @@
+#!/usr/bin/python
 # coding=utf-8
 ### ateeq72@xda 
 import cherrypy
@@ -12,7 +13,6 @@ import mysql
 import smtplib
 import MySQLdb
 import pymysql
-import web
 
 from DBUtils.PersistentDB import PersistentDB
 
@@ -116,8 +116,8 @@ class AteeqHomeAutomation:
 </div>
 <div class="ui-field-contain">
 
-<form method="post" action="/processform"> 
-<input type="email" name="email" id="email" placeholder="Enter the E-Mail ID!"  value="">
+<form method="post" action="processform"> 
+<input type="email" name="email"  placeholder="Enter the E-Mail ID!"  value="">
 <input type="submit" value="Submit"> 
 </form>
 
@@ -209,12 +209,12 @@ class AteeqHomeAutomation:
 </html>'''
         
 
-    cherrypy.expose
+    @cherrypy.expose
     def processform(self, email):
         smtpserver = 'smtp.gmail.com:587'
         authreq = 1
         smtpuser='ahmedateeq64@gmail.com'
-        smtppass='flmjlspxjmdlteme'
+        smtppass='<secret>'
         FROM = 'ahmedateeq64@gmail.com'
         TO = [email]
         SUBJECT = "Hi Greetings from Ateeq."
