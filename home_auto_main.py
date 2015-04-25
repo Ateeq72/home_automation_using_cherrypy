@@ -349,7 +349,7 @@ class AteeqHomeAutomation:
 
             </div>
     <center>
-    <h1>Mail sent to %s </h1>
+    <p1>Mail sent to %s </p1>
     </center>
     </div>
     </body>
