@@ -4,6 +4,8 @@
 # Jquery stuff
 # http://themeroller.jquerymobile.com/index.php
 # http://demos.jquerymobile.com/1.4.5/ 
+# using Cheetah template instead of PHP and Apache2 now :)
+# Thanks to everyone who helped! :)
 import cherrypy
 import RPi.GPIO as GPIO
 import time
