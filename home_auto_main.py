@@ -118,7 +118,7 @@ class AteeqHomeAutomation:
         </select>
     </div>
 <div class="ui-field-contain">
-        <label for="stream">Stream Toggle:  <a href="http://%s:8091/stream_webcam.html"> local! </a> & <a href="http://ateeqhomeautomationstream.ngrok.com/stream_webcam.html">Worldwide Stream!</a></label>
+        <label for="stream">Stream Toggle:  <a href="http://%s:8091/stream_webcam.html" data-transition="turn"> local! </a> & <a href="http://ateeqhomeautomationstream.ngrok.com/stream_webcam.html" data-transition="turn">Worldwide Stream!</a></label>
         <select name="stream" id="stream" data-role="flipswitch">
 
             <option value="off">Off</option>
@@ -126,15 +126,15 @@ class AteeqHomeAutomation:
         </select>
     </div>
 <div class="ui-field-contain">
-<label for="clear">Check Switches <a href="/sqldata">history</a></label>
+<label for="clear">Check Switches <a href="/sqldata" data-transition="turn">history</a></label>
 
 <form action="/reset">
 
 <!--<input type="button" id="clear" data-inline="true" value="Clear History">-->
-<input type="submit" data-inline="true" value="Clear History"></form>
+<input type="submit" data-inline="true" data-transition="turn" value="Clear History"></form>
 </div>
 <div class="ui-field-contain">
-<a href="/qrcode">Click Here!</a> to get connected to this Wifi!
+<a href="/qrcode" data-transition="turn" >Click Here!</a> to get connected to this Wifi!
 </div>
 <div class="ui-field-contain">
 
