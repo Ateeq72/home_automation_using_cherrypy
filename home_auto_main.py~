@@ -48,15 +48,8 @@ GPIO.setup(re3,GPIO.OUT)
 
 class AteeqHomeAutomation:
    
-    _cp_config = {
-        'tools.sessions.on': True,
-        'tools.auth.on': True
-    }
-    
-    auth = AuthController()
-    
+
     @cherrypy.expose
-    @require()
     def index(self):
 
         my_ip = ([(s.connect(('8.8.8.8', 80)), s.getsockname()[0], s.close()) for s in [socket.socket(socket.AF_INET, socket.SOCK_DGRAM)]][0][1])
@@ -168,7 +161,6 @@ class AteeqHomeAutomation:
 
 
     @cherrypy.expose
-    @require()
     def request(self, **data):
 
 	def addstuff(switch,action):
@@ -225,7 +217,6 @@ class AteeqHomeAutomation:
 	
 
     @cherrypy.expose
-    @require()
     def qrcode(self):
         return '''<!DOCTYPE html>
 <html>
@@ -268,7 +259,6 @@ class AteeqHomeAutomation:
 
 
     @cherrypy.expose
-    @require()
     def sqldata(self):
 	reqdata = HAusage.select()
         template = Template('''<!DOCTYPE html>
@@ -307,12 +297,11 @@ class AteeqHomeAutomation:
 
     
     @cherrypy.expose
-    @require()
     def processform(self, email):
         smtpserver = 'smtp.gmail.com:587'
         authreq = 1
         smtpuser='ahmedateeq64@gmail.com'
-        smtppass='flmjlspxjmdltemeat'
+        smtppass='flmjlspxjmdlteme'
         FROM = 'ahmedateeq64@gmail.com'
 
         TO = [email]
@@ -369,7 +358,6 @@ class AteeqHomeAutomation:
 
 
     @cherrypy.expose
-    @require()
     def reset(self):
         # Drop existing table
         HAusage.dropTable(True)
