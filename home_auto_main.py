@@ -40,12 +40,15 @@ re1 = 7
 re2 = 11
 re3 = 13
 
+LED = 18
+
 #set'em up as required
 	
 GPIO.setup(re1,GPIO.OUT)
 GPIO.setup(re2,GPIO.OUT)
 GPIO.setup(re3,GPIO.OUT)
 
+GPIO.setup(LED,GPIO.OUT)
 class AteeqHomeAutomation:
    
     _cp_config = {
@@ -54,6 +57,7 @@ class AteeqHomeAutomation:
     }
     
     auth = AuthController()
+    GPIO.output(LED,0)
     
     @cherrypy.expose
     @require()
@@ -79,6 +83,9 @@ class AteeqHomeAutomation:
         $(document).ready(function() {
 
             $("#clear").click(function () {$.post('/request',{key_pressed:"empty"})});
+            $("#halt").click(function () {$.post('/request',{key_pressed:"halt"})});
+            $("#kodi").click(function () {$.post('/request',{key_pressed:"kodi"})});
+            $("#restart").click(function () {$.post('/request',{key_pressed:"restart"})});
             $("#flip-1").change(function () {$.post('/request',{key_pressed:"power1_"+$(this).val()})});
             $("#flip-2").change(function () {$.post('/request',{key_pressed:"power2_"+$(this).val()})});
             $("#flip-3").change(function () {$.post('/request',{key_pressed:"power3_"+$(this).val()})});
@@ -153,6 +160,18 @@ class AteeqHomeAutomation:
 </form>
 
 </div>
+
+<div class="ui-field-contain">
+<input type="button" id="kodi" data-inline="true" value="Start KODI from here!">
+</div>
+
+
+<div class="ui-field-contain">
+<input type="button" id="halt" data-inline="true" value="ShutDown">
+<input type="button" id="restart" data-inline="true" value="Reboot">
+</div>
+
+
 <div class="ui-field-contain">
 <p> **please dont use if in automatic mode!</p>
 </div>
@@ -219,7 +238,15 @@ class AteeqHomeAutomation:
         elif key == "stream_off":
             print "Stream Off!"
             os.system("sudo service mjpg-streamer stop")
-	
+	elif key == "halt":
+            os.system('echo "Shutting Down. Good Bye." | festival --tts')
+	    os.system('sudo init 0')
+        elif key == "restart":
+            os.system('echo "Restarting. Please wait." | festival --tts')
+            os.system('sudo reboot')
+        elif key == "kodi":
+            os.system('echo "starting KODI. Please wait." | festival --tts')
+            os.system('sudo -u pi screen -d -m -q kodi-standalone')
         else:
             print key	
 	
@@ -312,7 +339,7 @@ class AteeqHomeAutomation:
         smtpserver = 'smtp.gmail.com:587'
         authreq = 1
         smtpuser='ahmedateeq64@gmail.com'
-        smtppass='flmjlspxjmdltemeat'
+        smtppass='flmjlspxjmdlteme'
         FROM = 'ahmedateeq64@gmail.com'
 
         TO = [email]
